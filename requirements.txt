@@ -1,0 +1,9 @@
+flask
+gunicorn
+requests
+gspread
+oauth2client
+pandas
+numpy
+yfinance
+python-telegram-bot==13.15
