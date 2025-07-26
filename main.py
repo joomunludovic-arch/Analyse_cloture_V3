@@ -8,8 +8,14 @@ import gspread
 import yfinance as yf
 from oauth2client.service_account import ServiceAccountCredentials
 from flask import Flask
+from analyseur import analyser_et_envoyer
 
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    resultat = analyser_et_envoyer()
+    return f"✅ Analyse terminée : {resultat}", 200
 
 # ENV VARIABLES
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
