@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: analyse-cloture
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker
+    envVars:
+      - key: TELEGRAM_TOKEN
+        sync: false
+      - key: CHAT_ID
+        sync: false
+      - key: GOOGLE_SHEET_ID
+        sync: false
+    secretFiles:
+      - source: credentials.json
+        target: /etc/secrets/credentials.json
