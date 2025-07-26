@@ -3,12 +3,12 @@ services:
     name: analyse-cloture-v3
     env: python
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn main:app"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
     envVars:
+      - key: TELEGRAM_TOKEN
+        value: 8415756245:AAHaU2KBRsC3q05eLld2JjMt_V7S9j-o4ys
+      - key: CHAT_ID
+        value: 5814604646
       - key: GOOGLE_SHEET_ID
         value: 1-hPKh5yJq6F-eboLbsG8sLxwdesI9LPH2L08emI7i6g
-      - key: TELEGRAM_TOKEN
-        value: 6500937161:AAFChZ1ApI6Ud5ySRJzjMJpNVkWo8MKmSxU
-      - key: TELEGRAM_CHAT_ID
-        value: -4180243604
