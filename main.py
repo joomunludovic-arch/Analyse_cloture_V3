@@ -12,4 +12,4 @@ def trigger():
         return f"❌ Erreur dans le script : {str(e)}", 500
 
 if __name__ == '__main__':
-    app.run()p
+    app.run(host="0.0.0.0", port=8000)
