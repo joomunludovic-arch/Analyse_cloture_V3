@@ -7,6 +7,14 @@ import gspread
 import yfinance as yf
 import asyncio
 
+import os
+
+# 🔍 Vérification Render : fichiers secrets injectés
+if os.path.exists("/etc/secrets"):
+    print("🧪 Fichiers dans /etc/secrets :", os.listdir("/etc/secrets"))
+else:
+    print("❌ Le dossier /etc/secrets n'existe pas.")
+
 app = FastAPI()
 
 @app.get("/", response_class=PlainTextResponse)
