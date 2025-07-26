@@ -1,8 +1,7 @@
 services:
   - type: web
-    name: analyse-cloture-v3
+    name: analyse-cloture
     env: python
-    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn main:app"
     envVars:
@@ -10,8 +9,7 @@ services:
         sync: false
       - key: 5814604646
         sync: false
-      - key: GOOGLE_SHEET_ID
+      - key: 1-hPKh5yJq6F-eboLbsG8sLxwdesI9LPH2L08emI7i6g
         sync: false
-    secretEnvVars:
       - key: GOOGLE_CREDENTIALS_JSON
-        path: /etc/secrets/credentials.json
+        sync: false
