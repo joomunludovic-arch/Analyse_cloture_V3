@@ -1,13 +1,16 @@
 services:
   - type: web
-    name: Analyse_cloture_V3
+    name: analyse-cloture-v3
     env: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app
     envVars:
       - key: TELEGRAM_TOKEN
-        fromDotEnv: true
+        sync: false
       - key: CHAT_ID
-        fromDotEnv: true
+        sync: false
       - key: GOOGLE_SHEET_ID
-        fromDotEnv: true
+        sync: false
+      - key: GOOGLE_CREDS_JSON
+        sync: false
