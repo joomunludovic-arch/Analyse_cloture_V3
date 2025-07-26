@@ -1,9 +1,8 @@
 flask
 gunicorn
-requests
-pandas
-numpy
-matplotlib
-yfinance
 gspread
 oauth2client
+yfinance
+numpy
+pandas
+matplotlib
