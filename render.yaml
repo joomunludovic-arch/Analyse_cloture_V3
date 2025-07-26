@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: analyse-cloture
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn main:app
+    envVars:
+      - key: TELEGRAM_TOKEN
+        value: 8415756245:AAHaU2KBRsC3q05eLld2JjMt_V7S9j-o4ys
+      - key: CHAT_ID
+        value: 5814604646
+      - key: GOOGLE_SHEET_ID
+        value: 1-hPKh5yJq6F-eboLbsG8sLxwdesI9LPH2L08emI7i6g
