@@ -8,22 +8,30 @@ from datetime import datetime
 
 def run():
     try:
-        # Initialisation des variables d’environnement
+        # Vérification des variables d’environnement
         GOOGLE_SHEET_ID = os.environ.get("GOOGLE_SHEET_ID")
         TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
         CHAT_ID = os.environ.get("CHAT_ID")
 
-        # Connexion Google Sheets
-        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        if not all([GOOGLE_SHEET_ID, TELEGRAM_TOKEN, CHAT_ID]):
+            raise ValueError("Une ou plusieurs variables d’environnement sont manquantes.")
+
+        # Connexion à Google Sheets
         creds_path = "/etc/secrets/credentials.json"
+        if not os.path.exists(creds_path):
+            raise FileNotFoundError("Fichier credentials.json introuvable.")
+
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
         creds = ServiceAccountCredentials.from_json_keyfile_name(creds_path, scope)
         client = gspread.authorize(creds)
         sheet = client.open_by_key(GOOGLE_SHEET_ID).sheet1
-        tickers = sheet.col_values(1)[1:]  # ignorer l’en-tête
+        tickers = sheet.col_values(1)[1:]  # ignore l'en-tête
 
-        # Initialisation Telegram
+        if not tickers:
+            raise ValueError("La liste de tickers dans Google Sheets est vide.")
+
+        # Initialisation de Telegram
         bot = Bot(token=TELEGRAM_TOKEN)
-
         messages = []
 
         for ticker in tickers:
@@ -31,7 +39,7 @@ def run():
             if data.empty or len(data) < 30:
                 continue
 
-            # VOLATILITÉ (écart-type sur 20 jours)
+            # VOLATILITÉ
             volatility = data["Close"].pct_change().rolling(window=20).std().iloc[-1]
 
             # ICHIMOKU
@@ -53,14 +61,10 @@ def run():
             message = f"{ticker} | {signal} | Volatilité: {volatility:.2%}"
             messages.append(message)
 
-        # Envoi du message Telegram
-        if messages:
-            final_message = "\n".join(messages)
-        else:
-            final_message = "Aucun signal détecté aujourd'hui."
-
+        final_message = "\n".join(messages) if messages else "Aucun signal détecté aujourd'hui."
         bot.send_message(chat_id=CHAT_ID, text=final_message)
 
-        return "Analyse envoyée avec succès."
+        return "Analyse envoyée avec succès ✅"
     except Exception as e:
+        print(f"[ERREUR] {e}")  # Affiche dans les logs Render
         return f"Erreur : {e}"
