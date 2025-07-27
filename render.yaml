@@ -4,7 +4,7 @@ services:
     runtime: python
     region: o1
     buildCommand: pip install --upgrade pip wheel setuptools && pip install -r requirements.txt
-    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:10000
+    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     envVars:
       - key: TELEGRAM_TOKEN
         value: 8415756245:AAHaU2KBRsC3q05eLld2JjMt_V7S9j-o4ys
