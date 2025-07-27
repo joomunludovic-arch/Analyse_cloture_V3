@@ -1,9 +1,11 @@
 services:
   - type: web
-    name: analyse-cloture
+    name: analyse-cloture-v3
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker
+    runtime: python
+    pythonVersion: 3.10
     envVars:
       - key: TELEGRAM_TOKEN
         sync: false
