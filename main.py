@@ -1,5 +1,8 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 import analyseur
+import os
+import uvicorn
 
 app = FastAPI()
 
@@ -7,6 +10,16 @@ app = FastAPI()
 def run_analysis():
     try:
         result = analyseur.run()
-        return {"message": str(result)}
+        return JSONResponse(
+            content={"message": str(result)},
+            media_type="application/json; charset=utf-8"
+        )
     except Exception as e:
-        return {"error": str(e)}
+        return JSONResponse(
+            content={"message": f"Erreur dans l'analyseur : {e}"},
+            media_type="application/json; charset=utf-8"
+        )
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))  # Render utilise la variable PORT
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
