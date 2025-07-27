@@ -1,9 +1,10 @@
 services:
   - type: web
     name: analyse-cloture-v3
+    plan: free
     runtime: python
-    pythonVersion: 3.10
-    buildCommand: pip install -r requirements.txt
+    pythonVersion: 3.10.13
+    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
     startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker
     envVars:
       - key: PYTHON_VERSION
@@ -15,6 +16,8 @@ services:
       - key: GOOGLE_SHEET_ID
         sync: false
       - key: GOOGLE_CREDS_PATH
+        value: /etc/secrets/credentials.json
+      - key: GOOGLE_CREDS_JSON
         value: /etc/secrets/credentials.json
     secretFiles:
       - path: /etc/secrets/credentials.json
