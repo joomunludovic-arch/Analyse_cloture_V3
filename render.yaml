@@ -2,11 +2,9 @@ services:
   - type: web
     name: analyse-cloture-v3
     runtime: python
-    env: python
-    plan: free
-    region: oregon
+    pythonVersion: 3.13
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker
+    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:10000
     envVars:
       - key: TELEGRAM_TOKEN
         sync: false
@@ -14,8 +12,8 @@ services:
         sync: false
       - key: GOOGLE_SHEET_ID
         sync: false
-    build:
-      pythonVersion: 3.10
-    secrets:
-      - source: credentials.json
-        target: /etc/secrets/credentials.json
+      - key: GOOGLE_CREDS_PATH
+        value: /etc/secrets/credentials.json
+    secretFiles:
+      - path: /etc/secrets/credentials.json
+        envVarName: GOOGLE_CREDS_JSON
