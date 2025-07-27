@@ -1,9 +1,10 @@
 services:
   - type: web
     name: analyse-cloture-v3
-    runtime: python
+    env: python
     plan: free
-    buildCommand: pip install --upgrade pip wheel setuptools && pip install -r requirements.txt
+    runtime: python
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker
     envVars:
       - key: TELEGRAM_TOKEN
