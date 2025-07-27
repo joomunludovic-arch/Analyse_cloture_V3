@@ -3,7 +3,7 @@ uvicorn[standard]==0.29.0
 gunicorn==21.2.0
 python-telegram-bot==20.3
 pandas==2.2.2
-yfinance==0.2.37
+yfinance==0.2.37 --no-binary :all:
 gspread==5.12.0
 oauth2client==4.1.3
 numpy==1.26.4
