@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: analyse-cloture-v3
+    runtime: python
+    plan: free
+    buildCommand: pip install --upgrade pip wheel setuptools && pip install -r requirements.txt
+    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker
+    envVars:
+      - key: TELEGRAM_TOKEN
+        sync: false
+      - key: CHAT_ID
+        sync: false
+      - key: GOOGLE_SHEET_ID
+        sync: false
+      - key: GOOGLE_CREDS_JSON
+        value: /etc/secrets/credentials.json
+    pythonVersion: 3.10.13
+    secrets:
+      - name: credentials.json
+        mountPath: /etc/secrets/credentials.json
