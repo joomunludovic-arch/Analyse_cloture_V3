@@ -1,16 +1,21 @@
 services:
   - type: web
     name: analyse-cloture-v3
+    runtime: python
     env: python
-    buildCommand: pip install --upgrade pip setuptools wheel && pip install -r requirements.txt
-    startCommand: gunicorn main:app -w 1 -k uvicorn.workers.UvicornWorker
+    plan: free
+    region: oregon
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn main:app -k uvicorn.workers.UvicornWorker
     envVars:
       - key: TELEGRAM_TOKEN
-        value: "8415756245:AAHaU2KBRsC3q05eLld2JjMt_V7S9j-o4ys"
+        sync: false
       - key: CHAT_ID
-        value: "5814604646"
+        sync: false
       - key: GOOGLE_SHEET_ID
-        value: "1-hPKh5yJq6F-eboLbsG8sLxwdesI9LPH2L08emI7i6g"
-      - key: GOOGLE_CREDS_JSON
-        value: "/etc/secrets/credentials.json"
-    autoDeploy: true
+        sync: false
+    build:
+      pythonVersion: 3.10
+    secrets:
+      - source: credentials.json
+        target: /etc/secrets/credentials.json
