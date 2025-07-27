@@ -1,32 +1,42 @@
 import yfinance as yf
-from telegram import Bot
+import telegram
 import os
+import matplotlib.pyplot as plt
+from io import BytesIO
+import datetime
 
-def run_volatilite():
-    tickers = ["TSLA", "NVDA", "AAPL", "META", "AMZN", "NFLX", "AMD", "GOOGL"]
-    seuil_volatilite = 0.03
-    resultats = []
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
+def run():
+    tickers = ["TSLA", "NVDA", "AAPL", "META", "AMD", "NFLX", "COIN", "SHOP", "GME", "RIVN"]
+    results = []
 
     for ticker in tickers:
-        data = yf.download(ticker, period="7d", interval="1d")
+        data = yf.download(ticker, period="15d", interval="1d")
         if len(data) < 2:
             continue
 
-        data["variation"] = abs(data["Close"].pct_change())
-        volatilite_moyenne = data["variation"].mean()
+        data["Volatility"] = data["High"] - data["Low"]
+        recent = data.iloc[-1]
+        avg_volatility = data["Volatility"].mean()
+        is_high = recent["Volatility"] > avg_volatility * 1.2
 
-        if volatilite_moyenne > seuil_volatilite:
-            resultats.append(f"{ticker} 📈 volatilité moyenne : {volatilite_moyenne:.2%}")
+        if is_high:
+            results.append((ticker, recent["Volatility"], avg_volatility))
 
-    if resultats:
-        message = "🔥 Actions à forte volatilité détectées :\n\n" + "\n".join(resultats)
-    else:
-        message = "Aucune action volatile détectée."
+            plt.figure(figsize=(10, 4))
+            data["Volatility"].plot(title=f"{ticker} - Volatilité")
+            buf = BytesIO()
+            plt.savefig(buf, format="png")
+            buf.seek(0)
 
-    token = os.environ.get("TELEGRAM_TOKEN")
-    chat_id = os.environ.get("CHAT_ID")
-    if token and chat_id:
-        bot = Bot(token=token)
-        bot.send_message(chat_id=chat_id, text=message)
+            bot = telegram.Bot(token=TELEGRAM_TOKEN)
+            bot.send_photo(chat_id=CHAT_ID, photo=buf,
+                           caption=f"🔥 {ticker} présente une forte volatilité aujourd'hui !\nVolatilité : {recent['Volatility']:.2f} vs Moyenne : {avg_volatility:.2f}")
 
-    return message
+    if not results:
+        bot = telegram.Bot(token=TELEGRAM_TOKEN)
+        bot.send_message(chat_id=CHAT_ID, text="📉 Aucune volatilité exceptionnelle détectée aujourd’hui.")
+
+    return f"{len(results)} tickers détectés à forte volatilité"
