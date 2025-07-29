@@ -1,4 +1,8 @@
-import test_telegram  # à placer en haut
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+import test_telegram
+
+app = FastAPI()
 
 @app.get("/test_telegram")
 def test_telegram_handler():
@@ -7,6 +11,7 @@ def test_telegram_handler():
         return JSONResponse(content={"message": result}, media_type="application/json; charset=utf-8")
     except Exception as e:
         return JSONResponse(content={"message": f"Erreur test Telegram : {e}"}, media_type="application/json; charset=utf-8")
+        
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import analyseur
