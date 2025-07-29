@@ -58,3 +58,20 @@ def run():
 
     except Exception as e:
         return f"Erreur dans l'analyseur : {str(e)}"
+
+try:
+    tickers = get_tickers_from_google_sheet()
+    resultats = analyse_tous_les_titres(tickers)
+
+    
+if resultats:
+        for message in resultats:
+            bot.send_message(chat_id=CHAT_ID, text=message, parse_mode=constants.ParseMode.MARKDOWN)
+        return {"message": f"{len(resultats)} signaux détectés et envoyés 📈"}
+    else:
+        bot.send_message(chat_id=CHAT_ID, text="🟡 Aucun signal détecté aujourd'hui.")
+        return {"message": "Aucun signal détecté aujourd'hui."}
+
+except Exception as e:
+    bot.send_message(chat_id=CHAT_ID, text=f"❌ Erreur détectée : {str(e)}")
+    return {"message": f"Erreur détectée : {str(e)}"}
