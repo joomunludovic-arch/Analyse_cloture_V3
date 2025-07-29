@@ -1,18 +1,15 @@
+# test_telegram.py
+
 import os
-import telegram
+from telegram import Bot
 
-# ✅ Tu dois avoir ces variables définies sur Render (ou dans un .env en local)
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
+def run_test():
+    token = os.getenv("TELEGRAM_TOKEN")
+    chat_id = os.getenv("CHAT_ID")
 
-def test_telegram():
-    try:
-        bot = telegram.Bot(token=TELEGRAM_TOKEN)
-        message = "✅ Le test Telegram a fonctionné.\nSi tu vois ce message, tout est correctement configuré !"
-        bot.send_message(chat_id=CHAT_ID, text=message)
-        print("✅ Message envoyé avec succès sur Telegram.")
-    except Exception as e:
-        print(f"❌ Erreur lors de l'envoi : {e}")
+    if not token or not chat_id:
+        return "Erreur : TELEGRAM_TOKEN ou CHAT_ID non défini dans les variables d’environnement."
 
-if __name__ == "__main__":
-    test_telegram()
+    bot = Bot(token=token)
+    bot.send_message(chat_id=chat_id, text="✅ Test réussi ! Ton bot Telegram fonctionne 🔥")
+    return "Message Telegram envoyé avec succès ✅"
