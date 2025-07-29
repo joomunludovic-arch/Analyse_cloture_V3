@@ -1,19 +1,5 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import test_telegram
-
-app = FastAPI()
-
-@app.get("/test_telegram")
-def test_telegram_handler():
-    try:
-        result = test_telegram.run_test()
-        return JSONResponse(content={"message": result}, media_type="application/json; charset=utf-8")
-    except Exception as e:
-        return JSONResponse(content={"message": f"Erreur test Telegram : {e}"}, media_type="application/json; charset=utf-8")
-        
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 import analyseur
 import volatilite
 import position_ouverture
@@ -65,17 +51,22 @@ def run_breakout():
     except Exception as e:
         return JSONResponse(content={"message": f"Erreur dans le breakout : {e}"}, media_type="application/json; charset=utf-8")
 
+from telegram import Bot
+import os
+
 @app.get("/test_telegram")
 def test_telegram():
     try:
-        TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-        CHAT_ID = os.getenv("CHAT_ID")
-        bot = telegram.Bot(token=TELEGRAM_TOKEN)
-        message = "✅ Le test Telegram a fonctionné. Si tu vois ce message, tout est bien configuré."
-        bot.send_message(chat_id=CHAT_ID, text=message)
-        return JSONResponse(content={"message": "Message Telegram envoyé avec succès ✅"}, media_type="application/json; charset=utf-8")
+        token = os.getenv("TELEGRAM_TOKEN")
+        chat_id = os.getenv("CHAT_ID")
+        if not token or not chat_id:
+            return {"message": "❌ TELEGRAM_TOKEN ou CHAT_ID non défini."}
+
+        bot = Bot(token=token)
+        bot.send_message(chat_id=chat_id, text="✅ Test réussi ! Ton bot Telegram fonctionne bien 🔥")
+        return {"message": "✅ Message Telegram envoyé avec succès."}
     except Exception as e:
-        return JSONResponse(content={"message": f"❌ Erreur Telegram : {e}"}, media_type="application/json; charset=utf-8")
+        return {"message": f"❌ Erreur : {e}"}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
